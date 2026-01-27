@@ -78,10 +78,39 @@ import "../styles/global.css";
   </nav>
 </aside>
 
+<div id="ratrakBubble" class="ratrak-bubble" data-show="false" aria-hidden="true">
+  <code id="ratrakBubbleText">&gt; terrain stable</code>
+</div>
+
+
 <script>
   const btn = document.getElementById("ratrakBtn");
   const drawer = document.getElementById("ratrakDrawer");
   const backdrop = document.getElementById("ratrakBackdrop");
+
+  const bubble = document.getElementById("ratrakBubble");
+  const bubbleText = document.getElementById("ratrakBubbleText");
+
+  const QUOTES = [
+    "> terrain stable",
+    "> grooming…",
+    "> compiling snow",
+    "> backend ready",
+    "> tests passing",
+    "> shipping…",
+    "> still running",
+    "> no bugs. just features.",
+    "> warming up…",
+    "> cache is warm",
+    "> edge case detected",
+    "> refactoring tracks",
+    "> logging…",
+    "> kids ask the best questions",
+    "> beep boop",
+  ];
+
+  let bubbleTimer = null;
+  let lastShownAt = 0;
 
   function setOpen(open) {
     drawer.dataset.open = String(open);
@@ -96,14 +125,65 @@ import "../styles/global.css";
     setOpen(!open);
   }
 
-  btn?.addEventListener("click", toggle);
+  function rand(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function pickQuote() {
+    return QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  }
+
+  function canShowBubble() {
+    const now = Date.now();
+    const cooldown = rand(30_000, 90_000);
+    return now - lastShownAt > cooldown;
+  }
+
+  function showBubble(text, ms = 2400) {
+    if (!bubble || !bubbleText) return;
+
+    // If the drawer is open, we can still show bubbles, but keep it rarer.
+    const now = Date.now();
+    lastShownAt = now;
+
+    bubbleText.textContent = text;
+    bubble.dataset.show = "true";
+    bubble.setAttribute("aria-hidden", "false");
+
+    if (bubbleTimer) window.clearTimeout(bubbleTimer);
+    bubbleTimer = window.setTimeout(() => {
+      bubble.dataset.show = "false";
+      bubble.setAttribute("aria-hidden", "true");
+      bubbleTimer = null;
+    }, ms);
+  }
+
+  function maybeSay(reason = "idle") {
+    // Keep it subtle.
+    if (!canShowBubble()) return;
+
+    // Probability gates depending on reason
+    const roll = Math.random();
+    if (reason === "idle" && roll > 0.25) return;     // 25%
+    if (reason === "scroll" && roll > 0.12) return;   // 12%
+    if (reason === "click" && roll > 0.65) return;    // 65%
+    if (reason === "open" && roll > 0.75) return;     // 75%
+
+    showBubble(pickQuote());
+  }
+
+  // Events
+  btn?.addEventListener("click", () => {
+    toggle();
+    maybeSay("click");
+  });
+
   backdrop?.addEventListener("click", () => setOpen(false));
 
   window.addEventListener("keydown", (e) => {
     const open = drawer.dataset.open === "true";
     if (e.key === "Escape") setOpen(false);
 
-    // Optional: keyboard shortcuts when drawer is open
     if (!open) return;
     if (e.key.toLowerCase() === "a") location.hash = "#about";
     if (e.key.toLowerCase() === "p") location.hash = "#projects";
@@ -111,9 +191,26 @@ import "../styles/global.css";
     if (e.key.toLowerCase() === "l") location.hash = "#logbook";
   });
 
+  // Idle chatter loop
+  setInterval(() => maybeSay("idle"), 12_000);
+
+  // Scroll: rare little reactions
+  let scrollTimeout = null;
+  window.addEventListener("scroll", () => {
+    if (scrollTimeout) return;
+    scrollTimeout = window.setTimeout(() => (scrollTimeout = null), 800);
+    maybeSay("scroll");
+  });
+
   // start closed
   setOpen(false);
+
+  // First greeting after load (small chance)
+  window.addEventListener("load", () => {
+    if (Math.random() < 0.5) showBubble("> terrain stable", 1800);
+  });
 </script>
+
 
   </body>
 </html>
