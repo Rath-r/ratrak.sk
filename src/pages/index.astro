@@ -22,48 +22,98 @@ import "../styles/global.css";
         <strong style="color: var(--text);">Next:</strong>
         <span style="color: var(--muted);"> Ratrak sprite + sidebar menu</span>
       </div>
+
+	  <section id="about" style="margin-top: 56px;">
+  <h2 style="margin: 0 0 10px 0;">About</h2>
+  <p>Backend developer. Minimal UI enjoyer. Ratrak is my pixel companion.</p>
+</section>
+
+<section id="projects" style="margin-top: 40px;">
+  <h2 style="margin: 0 0 10px 0;">Projects</h2>
+  <p>Coming soon: a few things I built and what I learned.</p>
+</section>
+
+<section id="teaching" style="margin-top: 40px;">
+  <h2 style="margin: 0 0 10px 0;">Teaching</h2>
+  <p>I run programming courses for kids — curious minds, playful learning.</p>
+</section>
+
+<section id="logbook" style="margin-top: 40px;">
+  <h2 style="margin: 0 0 10px 0;">Logbook</h2>
+  <p>Short notes instead of a blog. No pressure.</p>
+</section>
+
     </main>
 
-    <!-- RATRAK PLACEHOLDER (fixed, always visible) -->
-    <button
-      id="ratrak"
-      aria-label="Ratrak"
-      style="
-        position: fixed;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 48px;
-        height: 48px;
-        border: 0;
-        padding: 0;
-        background: transparent;
-        cursor: pointer;
-      "
-    >
-      <div
-        style="
-          width: 48px;
-          height: 48px;
-          border-radius: 10px;
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.10);
-          display: grid;
-          place-items: center;
-          color: var(--accent);
-          font-weight: 700;
-          user-select: none;
-        "
-      >
-        ⬛
-      </div>
-    </button>
+    <!-- RATRAK BUTTON -->
+<button id="ratrakBtn" class="ratrak-btn" aria-label="Open Ratrak menu">
+  <div class="ratrak-sprite">⬛</div>
+</button>
 
-    <script>
-      const btn = document.getElementById("ratrak");
-      btn?.addEventListener("click", () => {
-        console.log("ratrak click");
-      });
-    </script>
+<!-- BACKDROP -->
+<div id="ratrakBackdrop" class="ratrak-backdrop" data-open="false" aria-hidden="true"></div>
+
+<!-- DRAWER -->
+<aside
+  id="ratrakDrawer"
+  class="ratrak-drawer"
+  data-open="false"
+  aria-hidden="true"
+  aria-label="Ratrak menu"
+>
+  <div class="drawer-title">
+    <div>
+      <strong>ratrak</strong> <small>v0.1</small>
+    </div>
+    <span class="kbd-hint">Esc</span>
+  </div>
+
+  <p style="margin: 0 0 10px 0;">Quick shortcuts. Click outside to close.</p>
+
+  <nav class="drawer-nav">
+    <a class="drawer-link" href="#about"><span>about</span><span class="kbd-hint">A</span></a>
+    <a class="drawer-link" href="#projects"><span>projects</span><span class="kbd-hint">P</span></a>
+    <a class="drawer-link" href="#teaching"><span>teaching</span><span class="kbd-hint">T</span></a>
+    <a class="drawer-link" href="#logbook"><span>logbook</span><span class="kbd-hint">L</span></a>
+  </nav>
+</aside>
+
+<script>
+  const btn = document.getElementById("ratrakBtn");
+  const drawer = document.getElementById("ratrakDrawer");
+  const backdrop = document.getElementById("ratrakBackdrop");
+
+  function setOpen(open) {
+    drawer.dataset.open = String(open);
+    backdrop.dataset.open = String(open);
+    drawer.setAttribute("aria-hidden", String(!open));
+    backdrop.setAttribute("aria-hidden", String(!open));
+    btn.setAttribute("aria-label", open ? "Close Ratrak menu" : "Open Ratrak menu");
+  }
+
+  function toggle() {
+    const open = drawer.dataset.open === "true";
+    setOpen(!open);
+  }
+
+  btn?.addEventListener("click", toggle);
+  backdrop?.addEventListener("click", () => setOpen(false));
+
+  window.addEventListener("keydown", (e) => {
+    const open = drawer.dataset.open === "true";
+    if (e.key === "Escape") setOpen(false);
+
+    // Optional: keyboard shortcuts when drawer is open
+    if (!open) return;
+    if (e.key.toLowerCase() === "a") location.hash = "#about";
+    if (e.key.toLowerCase() === "p") location.hash = "#projects";
+    if (e.key.toLowerCase() === "t") location.hash = "#teaching";
+    if (e.key.toLowerCase() === "l") location.hash = "#logbook";
+  });
+
+  // start closed
+  setOpen(false);
+</script>
+
   </body>
 </html>
