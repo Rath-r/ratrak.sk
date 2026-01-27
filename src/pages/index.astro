@@ -1,17 +1,69 @@
 ---
-
+import "../styles/global.css";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="sk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ratrak.sk</title>
+  </head>
+
+  <body>
+    <main class="container">
+      <h1>
+        I build software.<br />
+        I teach kids to build things too.
+      </h1>
+
+      <p>Backend-first brain. Minimal UI. Pixel ratrak companion.</p>
+
+      <div class="card" style="margin-top: 24px;">
+        <strong style="color: var(--text);">Next:</strong>
+        <span style="color: var(--muted);"> Ratrak sprite + sidebar menu</span>
+      </div>
+    </main>
+
+    <!-- RATRAK PLACEHOLDER (fixed, always visible) -->
+    <button
+      id="ratrak"
+      aria-label="Ratrak"
+      style="
+        position: fixed;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48px;
+        height: 48px;
+        border: 0;
+        padding: 0;
+        background: transparent;
+        cursor: pointer;
+      "
+    >
+      <div
+        style="
+          width: 48px;
+          height: 48px;
+          border-radius: 10px;
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.10);
+          display: grid;
+          place-items: center;
+          color: var(--accent);
+          font-weight: 700;
+          user-select: none;
+        "
+      >
+        ⬛
+      </div>
+    </button>
+
+    <script>
+      const btn = document.getElementById("ratrak");
+      btn?.addEventListener("click", () => {
+        console.log("ratrak click");
+      });
+    </script>
+  </body>
 </html>
