@@ -4,75 +4,110 @@ const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const chance = (p) => Math.random() < p;
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-/**
- * Init ratrak UI (drawer + bubble + sprite states).
- * Expects these IDs in DOM:
- * - ratrakBtn, ratrakDrawer, ratrakBackdrop
- * - ratrakBubble, ratrakBubbleText
- * - ratrakSprite (img)
- */
-export function initRatrak() {
+const defaultConfig = {
+  ids: {
+    btn: "ratrakBtn",
+    drawer: "ratrakDrawer",
+    backdrop: "ratrakBackdrop",
+    bubble: "ratrakBubble",
+    bubbleText: "ratrakBubbleText",
+    sprite: "ratrakSprite",
+  },
+
+  // provide via initRatrak({ sprites })
+  sprites: {},
+
+  // provide via initRatrak({ quotes })
+  quotes: [],
+
+  bubble: {
+    durationMs: 2400,
+    cooldownMs: [30_000, 90_000],
+    greetChance: 0.5,
+    greetText: "> terrain stable",
+    greetDurationMs: 1800,
+  },
+
+  talk: {
+    idleEveryMs: 12_000,
+    prob: { idle: 0.22, scroll: 0.10, click: 0.70, open: 0.75 },
+  },
+
+  spritePulse: {
+    moveMs: 350,
+    workMs: 550,
+    blinkMs: [300, 600],
+    afterToggleHoldMs: 700,
+  },
+
+  idleBlink: {
+    checkEveryMs: 3500,
+    cooldownMs: [20_000, 60_000],
+    chance: 0.45,
+  },
+
+  shortcuts: {
+    enabled: true,
+    map: { a: "#about", p: "#projects", t: "#teaching", l: "#logbook" },
+  },
+
+  // Drawer width must match CSS .ratrak-drawer width (360px) for correct shift
+  drawerWidthPx: 360,
+};
+
+function mergeDeep(base, override) {
+  const out = { ...base };
+  for (const [k, v] of Object.entries(override || {})) {
+    if (v && typeof v === "object" && !Array.isArray(v)) {
+      out[k] = mergeDeep(base[k] || {}, v);
+    } else {
+      out[k] = v;
+    }
+  }
+  return out;
+}
+
+export function initRatrak(userConfig = {}) {
+  const cfg = mergeDeep(defaultConfig, userConfig);
+
   // --- DOM ---
-  const btn = document.getElementById("ratrakBtn");
-  const drawer = document.getElementById("ratrakDrawer");
-  const backdrop = document.getElementById("ratrakBackdrop");
-
-  const bubble = document.getElementById("ratrakBubble");
-  const bubbleText = document.getElementById("ratrakBubbleText");
-
-  const spriteEl = document.getElementById("ratrakSprite");
+  const btn = document.getElementById(cfg.ids.btn);
+  const drawer = document.getElementById(cfg.ids.drawer);
+  const backdrop = document.getElementById(cfg.ids.backdrop);
+  const bubble = document.getElementById(cfg.ids.bubble);
+  const bubbleText = document.getElementById(cfg.ids.bubbleText);
+  const spriteEl = document.getElementById(cfg.ids.sprite);
 
   if (!btn || !drawer || !backdrop || !bubble || !bubbleText || !spriteEl) {
     console.warn("[ratrak] missing DOM nodes, not initializing");
-    return;
+    return { destroy() {} };
   }
 
-  // --- Content ---
-  const QUOTES = [
-    "> terrain stable",
-    "> grooming…",
-    "> compiling snow",
-    "> backend ready",
-    "> tests passing",
-    "> shipping…",
-    "> still running",
-    "> no bugs. just features.",
-    "> warming up…",
-    "> cache is warm",
-    "> edge case detected",
-    "> refactoring tracks",
-    "> logging…",
-    "> kids ask the best questions",
-    "> beep boop",
-  ];
+  const isMobile = () => window.matchMedia("(max-width: 640px)").matches;
 
-  // --- UI: Drawer ---
+  // --- Drawer ---
   function setDrawerOpen(open) {
     drawer.dataset.open = String(open);
     backdrop.dataset.open = String(open);
     drawer.setAttribute("aria-hidden", String(!open));
     backdrop.setAttribute("aria-hidden", String(!open));
     btn.setAttribute("aria-label", open ? "Close Ratrak menu" : "Open Ratrak menu");
+
+    // Shift ratrak left on desktop so it stays visible next to drawer
+    const shift = open && !isMobile();
+    btn.dataset.shift = String(shift);
   }
 
-  // --- Controller: Sprite states ---
+  // --- Sprite controller ---
   const Ratrak = (() => {
-    const SPRITES = {
-      idle: "/ratrak/idle.png",
-      blink: "/ratrak/blink.png",
-      move: "/ratrak/move.png",
-      work: "/ratrak/work.png",
-    };
-
     let state = "idle";
     let holdTimer = null;
 
-    // anti-spam for idle blinks
     let lastIdleBlinkAt = 0;
     let idleLoopTimer = null;
 
     function apply(stateName) {
-      const src = SPRITES[stateName];
+      const src = cfg.sprites?.[stateName];
       if (!src) return;
       state = stateName;
       spriteEl.src = src;
@@ -101,14 +136,16 @@ export function initRatrak() {
         if (state !== "idle") return;
 
         const now = Date.now();
-        const cooldown = randInt(20_000, 60_000); // 20–60s
+        const [cMin, cMax] = cfg.idleBlink.cooldownMs;
+        const cooldown = randInt(cMin, cMax);
         if (now - lastIdleBlinkAt < cooldown) return;
 
-        if (!chance(0.45)) return;
+        if (!chance(cfg.idleBlink.chance)) return;
 
         lastIdleBlinkAt = now;
-        pulse("blink", randInt(300, 600));
-      }, 3500);
+        const [bMin, bMax] = cfg.spritePulse.blinkMs;
+        pulse("blink", randInt(bMin, bMax));
+      }, cfg.idleBlink.checkEveryMs);
     }
 
     function stopIdleBlinkLoop() {
@@ -119,26 +156,24 @@ export function initRatrak() {
     return { setState, pulse, startIdleBlinkLoop, stopIdleBlinkLoop, getState: () => state };
   })();
 
-  // --- UI: Bubble ---
+  // --- Bubble ---
   let bubbleTimer = null;
   let lastShownAt = 0;
 
   function canShowBubble() {
     const now = Date.now();
-    const cooldown = randInt(30_000, 90_000);
+    const [minMs, maxMs] = cfg.bubble.cooldownMs;
+    const cooldown = randInt(minMs, maxMs);
     return now - lastShownAt > cooldown;
   }
 
-  function showBubble(text, ms = 2400) {
+  function showBubble(text, ms = cfg.bubble.durationMs) {
     lastShownAt = Date.now();
     bubbleText.textContent = text;
 
-    // Visual feedback
-    if (drawer.dataset.open === "true") {
-      Ratrak.pulse("blink", 300);
-    } else {
-      Ratrak.pulse("blink", 450);
-    }
+    // visual feedback
+    const [bMin, bMax] = cfg.spritePulse.blinkMs;
+    Ratrak.pulse("blink", drawer.dataset.open === "true" ? 300 : randInt(bMin, bMax));
 
     bubble.dataset.show = "true";
     bubble.setAttribute("aria-hidden", "false");
@@ -152,73 +187,93 @@ export function initRatrak() {
   }
 
   function maybeSay(reason = "idle") {
+    // On mobile, keep it quiet while drawer is open
+    if (isMobile() && drawer.dataset.open === "true") return;
+
     if (!canShowBubble()) return;
 
-    const roll = Math.random();
-    if (reason === "idle" && roll > 0.22) return;
-    if (reason === "scroll" && roll > 0.10) return;
-    if (reason === "click" && roll > 0.70) return;
-    if (reason === "open" && roll > 0.75) return;
+    const p = cfg.talk.prob[reason] ?? 0;
+    if (!chance(p)) return;
 
-    showBubble(pick(QUOTES));
+    if (!cfg.quotes || cfg.quotes.length === 0) return;
+    showBubble(pick(cfg.quotes));
   }
 
   function toggleDrawer() {
     const open = drawer.dataset.open === "true";
     setDrawerOpen(!open);
 
-    Ratrak.setState(!open ? "work" : "idle", { holdMs: 700 });
+    Ratrak.setState(!open ? "work" : "idle", { holdMs: cfg.spritePulse.afterToggleHoldMs });
 
     if (!open) maybeSay("open");
   }
 
-  // --- Events ---
-  btn.addEventListener("click", () => {
-    Ratrak.pulse("work", 550);
+  // --- Handlers (for cleanup) ---
+  const onBtnClick = () => {
+    Ratrak.pulse("work", cfg.spritePulse.workMs);
     maybeSay("click");
     toggleDrawer();
-  });
+  };
 
-  backdrop.addEventListener("click", () => {
+  const onBackdropClick = () => {
     setDrawerOpen(false);
     Ratrak.setState("idle");
-  });
+  };
 
-  window.addEventListener("keydown", (e) => {
+  const onKeyDown = (e) => {
     const open = drawer.dataset.open === "true";
+
     if (e.key === "Escape") {
       setDrawerOpen(false);
       Ratrak.setState("idle");
+      return;
     }
 
-    if (!open) return;
-    if (e.key.toLowerCase() === "a") location.hash = "#about";
-    if (e.key.toLowerCase() === "p") location.hash = "#projects";
-    if (e.key.toLowerCase() === "t") location.hash = "#teaching";
-    if (e.key.toLowerCase() === "l") location.hash = "#logbook";
-  });
+    if (!open || !cfg.shortcuts.enabled) return;
 
-  // Scroll: brief move + rare chatter
+    const key = e.key.toLowerCase();
+    const hash = cfg.shortcuts.map[key];
+    if (hash) location.hash = hash;
+  };
+
   let scrollLock = null;
-  window.addEventListener("scroll", () => {
+  const onScroll = () => {
     if (scrollLock) return;
     scrollLock = window.setTimeout(() => (scrollLock = null), 650);
 
     if (drawer.dataset.open !== "true") {
-      Ratrak.pulse("move", 350);
+      Ratrak.pulse("move", cfg.spritePulse.moveMs);
     }
     maybeSay("scroll");
-  });
+  };
 
-  // Idle chatter loop (separate from blink loop)
-  setInterval(() => maybeSay("idle"), 12_000);
+  // --- Start ---
+  btn.addEventListener("click", onBtnClick);
+  backdrop.addEventListener("click", onBackdropClick);
+  window.addEventListener("keydown", onKeyDown);
+  window.addEventListener("scroll", onScroll);
 
-  // --- Init ---
+  const talkTimer = window.setInterval(() => maybeSay("idle"), cfg.talk.idleEveryMs);
+
   setDrawerOpen(false);
   Ratrak.setState("idle");
   Ratrak.startIdleBlinkLoop();
 
-  window.addEventListener("load", () => {
-    if (chance(0.5)) showBubble("> terrain stable", 1800);
-  });
+  const onLoad = () => {
+    if (chance(cfg.bubble.greetChance)) showBubble(cfg.bubble.greetText, cfg.bubble.greetDurationMs);
+  };
+  window.addEventListener("load", onLoad, { once: true });
+
+  return {
+    destroy() {
+      btn.removeEventListener("click", onBtnClick);
+      backdrop.removeEventListener("click", onBackdropClick);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("load", onLoad);
+
+      window.clearInterval(talkTimer);
+      Ratrak.stopIdleBlinkLoop();
+    },
+  };
 }

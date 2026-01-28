@@ -204,3 +204,7 @@ p {
   color: var(--text);
   background: transparent;
 }
+
+.ratrak-btn[data-shift="true"] {
+  right: calc(12px + min(360px, calc(100vw - 72px)));
+}

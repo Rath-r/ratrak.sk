@@ -20,81 +20,86 @@ import "../styles/global.css";
 
       <div class="card" style="margin-top: 24px;">
         <strong style="color: var(--text);">Next:</strong>
-        <span style="color: var(--muted);"> Ratrak sprite + sidebar menu</span>
+        <span style="color: var(--muted);"> Ratrak sprite states + drawer + bubbles</span>
       </div>
 
-	  <section id="about" style="margin-top: 56px;">
-  <h2 style="margin: 0 0 10px 0;">About</h2>
-  <p>Backend developer. Minimal UI enjoyer. Ratrak is my pixel companion.</p>
-</section>
+      <section id="about" style="margin-top: 56px;">
+        <h2 style="margin: 0 0 10px 0;">About</h2>
+        <p>Backend developer. Minimal UI enjoyer. Ratrak is my pixel companion.</p>
+      </section>
 
-<section id="projects" style="margin-top: 40px;">
-  <h2 style="margin: 0 0 10px 0;">Projects</h2>
-  <p>Coming soon: a few things I built and what I learned.</p>
-</section>
+      <section id="projects" style="margin-top: 40px;">
+        <h2 style="margin: 0 0 10px 0;">Projects</h2>
+        <p>Coming soon: a few things I built and what I learned.</p>
+      </section>
 
-<section id="teaching" style="margin-top: 40px;">
-  <h2 style="margin: 0 0 10px 0;">Teaching</h2>
-  <p>I run programming courses for kids — curious minds, playful learning.</p>
-</section>
+      <section id="teaching" style="margin-top: 40px;">
+        <h2 style="margin: 0 0 10px 0;">Teaching</h2>
+        <p>I run programming courses for kids — curious minds, playful learning.</p>
+      </section>
 
-<section id="logbook" style="margin-top: 40px;">
-  <h2 style="margin: 0 0 10px 0;">Logbook</h2>
-  <p>Short notes instead of a blog. No pressure.</p>
-</section>
-
+      <section id="logbook" style="margin-top: 40px;">
+        <h2 style="margin: 0 0 10px 0;">Logbook</h2>
+        <p>Short notes instead of a blog. No pressure.</p>
+      </section>
     </main>
 
     <!-- RATRAK BUTTON -->
-<button id="ratrakBtn" class="ratrak-btn" aria-label="Open Ratrak menu">
-  <div class="ratrak-sprite">
-	<img
-	id="ratrakSprite"
-	src="/ratrak/idle.png"
-	width="48"
-	height="48"
-	alt=""
-	/>
-	</div>
-</button>
+    <button
+      id="ratrakBtn"
+      class="ratrak-btn"
+      data-shift="false"
+      aria-label="Open Ratrak menu"
+    >
+      <div class="ratrak-sprite">
+        <img id="ratrakSprite" src="/ratrak/idle.png" width="48" height="48" alt="" />
+      </div>
+    </button>
 
-<!-- BACKDROP -->
-<div id="ratrakBackdrop" class="ratrak-backdrop" data-open="false" aria-hidden="true"></div>
+    <!-- BACKDROP -->
+    <div id="ratrakBackdrop" class="ratrak-backdrop" data-open="false" aria-hidden="true"></div>
 
-<!-- DRAWER -->
-<aside
-  id="ratrakDrawer"
-  class="ratrak-drawer"
-  data-open="false"
-  aria-hidden="true"
-  aria-label="Ratrak menu"
->
-  <div class="drawer-title">
-    <div>
-      <strong>ratrak</strong> <small>v0.1</small>
+    <!-- DRAWER -->
+    <aside
+      id="ratrakDrawer"
+      class="ratrak-drawer"
+      data-open="false"
+      aria-hidden="true"
+      aria-label="Ratrak menu"
+    >
+      <div class="drawer-title">
+        <div>
+          <strong>ratrak</strong> <small>v0.1</small>
+        </div>
+        <span class="kbd-hint">Esc</span>
+      </div>
+
+      <p style="margin: 0 0 10px 0;">Quick shortcuts. Click outside to close.</p>
+
+      <nav class="drawer-nav">
+        <a class="drawer-link" href="#about"><span>about</span><span class="kbd-hint">A</span></a>
+        <a class="drawer-link" href="#projects"><span>projects</span><span class="kbd-hint">P</span></a>
+        <a class="drawer-link" href="#teaching"><span>teaching</span><span class="kbd-hint">T</span></a>
+        <a class="drawer-link" href="#logbook"><span>logbook</span><span class="kbd-hint">L</span></a>
+      </nav>
+    </aside>
+
+    <!-- BUBBLE -->
+    <div id="ratrakBubble" class="ratrak-bubble" data-show="false" aria-hidden="true">
+      <code id="ratrakBubbleText">&gt; terrain stable</code>
     </div>
-    <span class="kbd-hint">Esc</span>
-  </div>
 
-  <p style="margin: 0 0 10px 0;">Quick shortcuts. Click outside to close.</p>
+    <script>
+      import { initRatrak } from "../scripts/ratrak.js";
+      import { ratrakQuotes } from "../content/ratrak-quotes.js";
+      import { ratrakSprites } from "../content/ratrak-sprites.js";
 
-  <nav class="drawer-nav">
-    <a class="drawer-link" href="#about"><span>about</span><span class="kbd-hint">A</span></a>
-    <a class="drawer-link" href="#projects"><span>projects</span><span class="kbd-hint">P</span></a>
-    <a class="drawer-link" href="#teaching"><span>teaching</span><span class="kbd-hint">T</span></a>
-    <a class="drawer-link" href="#logbook"><span>logbook</span><span class="kbd-hint">L</span></a>
-  </nav>
-</aside>
+      initRatrak({
+        quotes: ratrakQuotes,
+        sprites: ratrakSprites,
+      });
+    </script>
 
-<div id="ratrakBubble" class="ratrak-bubble" data-show="false" aria-hidden="true">
-  <code id="ratrakBubbleText">&gt; terrain stable</code>
-</div>
-
-
-<script>
-  import { initRatrak } from "../scripts/ratrak.js";
-  initRatrak();
-</script>
 
   </body>
 </html>
