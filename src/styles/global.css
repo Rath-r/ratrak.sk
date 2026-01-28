@@ -265,3 +265,41 @@ p {
     transform: translateY(0);
   }
 }
+
+/* Content layout */
+.hero {
+  padding-top: 12px;
+}
+
+.hero .lead {
+  margin-top: 10px;
+  font-size: 18px;
+  color: var(--muted);
+}
+
+.stack {
+  margin-top: 24px;
+}
+
+.section {
+  margin-top: 44px;
+}
+
+.section h2 {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.section p {
+  margin: 0;
+}
+
+.card {
+  margin-top: 24px;
+}
+
+.muted {
+  color: var(--muted);
+}
