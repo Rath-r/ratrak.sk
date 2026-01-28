@@ -90,6 +90,32 @@ export function initRatrak(userConfig = {}) {
     return { destroy() {} };
   }
 
+  // --- Attention bob (subtle, rare) ---
+  let lastBobAt = 0;
+  const bobTimer = window.setInterval(() => {
+    const drawerOpen = drawer.dataset.open === "true";
+    if (drawerOpen) return;
+    if (Ratrak.getState() !== "idle") return;
+
+    // very rare
+    const now = Date.now();
+    const cooldown = randInt(90_000, 180_000); // 1.5–3 min
+    if (now - lastBobAt < cooldown) return;
+
+    // probability gate
+    if (!chance(0.35)) return;
+
+    lastBobAt = now;
+
+    btn.dataset.bob = "true";
+    window.setTimeout(
+      () => {
+        btn.dataset.bob = "false";
+      },
+      randInt(2200, 4200),
+    ); // bob for ~2–4s
+  }, 12_000);
+
   const isMobile = () => window.matchMedia("(max-width: 640px)").matches;
 
   // --- Drawer ---
@@ -323,6 +349,8 @@ export function initRatrak(userConfig = {}) {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("load", onLoad);
+
+      window.clearInterval(bobTimer);
 
       window.clearInterval(talkTimer);
       window.clearInterval(idleGlowTimer);
