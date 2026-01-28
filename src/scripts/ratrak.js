@@ -312,6 +312,47 @@ export function initRatrak(userConfig = {}) {
     cfg.talk.idleEveryMs,
   );
 
+  // --- Section awareness ---
+  let currentSection = null;
+
+  const sections = Array.from(document.querySelectorAll("[data-ratrak]"));
+
+  function getActiveSection() {
+    const mid = window.innerHeight * 0.4;
+
+    for (const s of sections) {
+      const rect = s.getBoundingClientRect();
+      if (rect.top <= mid && rect.bottom >= mid) {
+        return s.dataset.ratrak;
+      }
+    }
+    return null;
+  }
+
+  window.addEventListener("scroll", () => {
+    const next = getActiveSection();
+    if (!next || next === currentSection) return;
+
+    currentSection = next;
+
+    if (drawer.dataset.open === "true") return;
+
+    switch (next) {
+      case "projects":
+        Ratrak.pulse("move", 500);
+        break;
+
+      case "teaching":
+        Ratrak.pulse("blink", 600);
+        maybeSay("idle"); // jemná šanca na hlášku
+        break;
+
+      case "logbook":
+        // nič – pokoj
+        break;
+    }
+  });
+
   // --- Init state ---
   setDrawerOpen(false);
   Ratrak.setState("idle");
