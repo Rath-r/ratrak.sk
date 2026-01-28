@@ -1,5 +1,8 @@
 ---
 import "../styles/global.css";
+import { projects } from "../content/projects.js";
+import { teaching } from "../content/teaching.js";
+import { logbook } from "../content/logbook.js";
 ---
 
 <html lang="sk">
@@ -34,85 +37,70 @@ import "../styles/global.css";
 
 			<section id="projects" class="section">
 			<h2>Projects</h2>
+
 			<div class="grid cols-2">
-			<article class="item">
-				<div class="item-title">
-				<strong>ratrak.sk</strong>
-				<span class="pill">astro</span>
-				</div>
-				<p>Personal site playground: pixel companion + clean content.</p>
-				<div class="meta">
-				<a href="#projects">case study</a>
-				<a href="#projects">github</a>
-				</div>
-			</article>
+				{projects.map((p) => (
+				<article class="item">
+					<div class="item-title">
+					<strong>{p.title}</strong>
+					<span class="pill">{p.tag}</span>
+					</div>
+					<p>{p.description}</p>
 
-			<article class="item">
-				<div class="item-title">
-				<strong>Backend thing</strong>
-				<span class="pill">api</span>
-				</div>
-				<p>A small backend project you’re proud of (add later).</p>
-				<div class="meta">
-				<a href="#projects">notes</a>
-				<a href="#projects">repo</a>
-				</div>
-			</article>
+					{p.links && (
+					<div class="meta">
+						{p.links.map((l) => (
+						<a href={l.href}>{l.label}</a>
+						))}
+					</div>
+					)}
+				</article>
+				))}
 			</div>
-
 			</section>
+
 
 			<section id="teaching" class="section">
 			<h2>Teaching</h2>
+
 			<div class="grid">
-			<article class="item">
-				<div class="item-title">
-				<strong>Programming for kids</strong>
-				<span class="pill">workshops</span>
-				</div>
-				<p>Hands-on sessions: micro:bit, basics, and lots of “why?” questions.</p>
-				<div class="meta">
-				<span>Age: 10–14</span>
-				<span>Format: small groups</span>
-				</div>
-			</article>
+				{teaching.map((t) => (
+				<article class="item">
+					<div class="item-title">
+					<strong>{t.title}</strong>
+					<span class="pill">{t.tag}</span>
+					</div>
+					<p>{t.description}</p>
 
-			<article class="item">
-				<div class="item-title">
-				<strong>micro:bit course</strong>
-				<span class="pill">micro:bit</span>
-				</div>
-				<p>Playful intro to programming + electronics. Projects kids can show off.</p>
-				<div class="meta">
-				<span>Beginner-friendly</span>
-				<span>Fun-first</span>
-				</div>
-			</article>
+					{t.meta && (
+					<div class="meta">
+						{t.meta.map((m) => (
+						<span>{m}</span>
+						))}
+					</div>
+					)}
+				</article>
+				))}
 			</div>
-
 			</section>
+
 
 			<section id="logbook" class="section">
 			<h2>Logbook</h2>
+
 			<div class="grid">
-			<article class="item">
-				<div class="item-title">
-				<strong>v0.1: ratrak lives</strong>
-				<span class="pill">now</span>
-				</div>
-				<p>Sprite states, bubbles, and a drawer menu. Next: content + polish.</p>
-			</article>
-
-			<article class="item">
-				<div class="item-title">
-				<strong>notes</strong>
-				<span class="pill">soon</span>
-				</div>
-				<p>Short technical notes instead of blog posts. Zero pressure.</p>
-			</article>
+				{logbook.map((e) => (
+				<article class="item">
+					<div class="item-title">
+					<strong>{e.title}</strong>
+					<span class="pill">{e.tag}</span>
+					</div>
+					<p>{e.description}</p>
+				</article>
+				))}
 			</div>
-
 			</section>
+
 
 	</div>
 
