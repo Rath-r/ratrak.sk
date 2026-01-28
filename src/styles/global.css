@@ -61,6 +61,7 @@ p {
   background: transparent;
   cursor: pointer;
   z-index: 50;
+  transition: right 220ms ease;
 }
 
 .ratrak-sprite {
@@ -207,4 +208,60 @@ p {
 
 .ratrak-btn[data-shift="true"] {
   right: calc(12px + min(360px, calc(100vw - 72px)));
+}
+
+/* Ratrak glow states */
+.ratrak-sprite {
+  transition:
+    transform 180ms ease,
+    filter 180ms ease;
+}
+
+.ratrak-btn[data-active="true"] .ratrak-sprite {
+  transform: scale(1.08);
+  filter:
+    drop-shadow(0 0 6px rgba(76, 255, 122, 0.45))
+    drop-shadow(0 0 14px rgba(76, 255, 122, 0.25));
+}
+
+.ratrak-btn[data-state="move"] .ratrak-sprite { transform: translateX(-1px) scale(1.03); }
+.ratrak-btn[data-state="blink"] .ratrak-sprite { filter: drop-shadow(0 0 6px rgba(76,255,122,0.35)) drop-shadow(0 0 12px rgba(76,255,122,0.18)); }
+.ratrak-btn[data-state="work"] .ratrak-sprite { transform: scale(1.08); filter: drop-shadow(0 0 6px rgba(76,255,122,0.45)) drop-shadow(0 0 14px rgba(76,255,122,0.25)); }
+
+/* Mobile polish */
+@media (max-width: 640px) {
+  .ratrak-btn {
+    right: 10px;
+    top: auto;
+    bottom: 12px;
+    transform: none;
+  }
+
+  /* when drawer is open, keep ratrak visible but smaller and above drawer edge */
+  .ratrak-btn[data-active="true"] .ratrak-sprite {
+    transform: scale(0.92);
+  }
+
+  /* hide bubble entirely on mobile (clean + no overlap) */
+  .ratrak-bubble {
+    display: none;
+  }
+
+  /* drawer feels better on mobile */
+  .ratrak-drawer {
+    width: calc(100vw - 20px);
+    right: 10px;
+    left: 10px;
+    border-left: none;
+    border-radius: 18px;
+    height: auto;
+    bottom: 10px;
+    top: auto;
+    padding: 16px;
+    transform: translateY(110%);
+  }
+
+  .ratrak-drawer[data-open="true"] {
+    transform: translateY(0);
+  }
 }

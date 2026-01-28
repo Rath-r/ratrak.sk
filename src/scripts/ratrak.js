@@ -34,7 +34,7 @@ const defaultConfig = {
   },
 
   spritePulse: {
-    moveMs: 350,
+    moveMs: 650, // ✅ more readable
     workMs: 550,
     blinkMs: [300, 600],
     afterToggleHoldMs: 700,
@@ -46,12 +46,19 @@ const defaultConfig = {
     chance: 0.45,
   },
 
+  // ✅ NEW: super subtle idle glow (uses blink state visuals)
+  idleGlow: {
+    checkEveryMs: 10_000,
+    cooldownMs: [120_000, 240_000], // 2–4 min
+    chance: 0.35,
+    pulseMs: 900,
+  },
+
   shortcuts: {
     enabled: true,
     map: { a: "#about", p: "#projects", t: "#teaching", l: "#logbook" },
   },
 
-  // Drawer width must match CSS .ratrak-drawer width (360px) for correct shift
   drawerWidthPx: 360,
 };
 
@@ -96,6 +103,10 @@ export function initRatrak(userConfig = {}) {
     // Shift ratrak left on desktop so it stays visible next to drawer
     const shift = open && !isMobile();
     btn.dataset.shift = String(shift);
+
+    // Optional: if you use it in CSS somewhere
+    // btn.dataset.active = String(open);
+    btn.dataset.active = String(open && !isMobile());
   }
 
   // --- Sprite controller ---
@@ -104,13 +115,17 @@ export function initRatrak(userConfig = {}) {
     let holdTimer = null;
 
     let lastIdleBlinkAt = 0;
-    let idleLoopTimer = null;
+    let idleBlinkTimer = null;
 
     function apply(stateName) {
       const src = cfg.sprites?.[stateName];
       if (!src) return;
+
       state = stateName;
       spriteEl.src = src;
+
+      // ✅ expose state to CSS
+      btn.dataset.state = stateName;
     }
 
     function setState(stateName, opts = {}) {
@@ -128,9 +143,9 @@ export function initRatrak(userConfig = {}) {
     }
 
     function startIdleBlinkLoop() {
-      if (idleLoopTimer) return;
+      if (idleBlinkTimer) return;
 
-      idleLoopTimer = window.setInterval(() => {
+      idleBlinkTimer = window.setInterval(() => {
         const drawerOpen = drawer.dataset.open === "true";
         if (drawerOpen) return;
         if (state !== "idle") return;
@@ -149,8 +164,8 @@ export function initRatrak(userConfig = {}) {
     }
 
     function stopIdleBlinkLoop() {
-      window.clearInterval(idleLoopTimer);
-      idleLoopTimer = null;
+      window.clearInterval(idleBlinkTimer);
+      idleBlinkTimer = null;
     }
 
     return { setState, pulse, startIdleBlinkLoop, stopIdleBlinkLoop, getState: () => state };
@@ -171,7 +186,6 @@ export function initRatrak(userConfig = {}) {
     lastShownAt = Date.now();
     bubbleText.textContent = text;
 
-    // visual feedback
     const [bMin, bMax] = cfg.spritePulse.blinkMs;
     Ratrak.pulse("blink", drawer.dataset.open === "true" ? 300 : randInt(bMin, bMax));
 
@@ -247,7 +261,7 @@ export function initRatrak(userConfig = {}) {
     maybeSay("scroll");
   };
 
-  // --- Start ---
+  // --- Start: listeners ---
   btn.addEventListener("click", onBtnClick);
   backdrop.addEventListener("click", onBackdropClick);
   window.addEventListener("keydown", onKeyDown);
@@ -255,9 +269,29 @@ export function initRatrak(userConfig = {}) {
 
   const talkTimer = window.setInterval(() => maybeSay("idle"), cfg.talk.idleEveryMs);
 
+  // --- Init state ---
   setDrawerOpen(false);
   Ratrak.setState("idle");
+  btn.dataset.state = "idle"; // explicit default
   Ratrak.startIdleBlinkLoop();
+
+  // --- NEW: idle micro-glow loop (uses blink state visuals) ---
+  let lastIdleGlowAt = 0;
+  const idleGlowTimer = window.setInterval(() => {
+    const drawerOpen = drawer.dataset.open === "true";
+    if (drawerOpen) return;
+    if (Ratrak.getState() !== "idle") return;
+
+    const now = Date.now();
+    const [cMin, cMax] = cfg.idleGlow.cooldownMs;
+    const cooldown = randInt(cMin, cMax);
+    if (now - lastIdleGlowAt < cooldown) return;
+
+    if (!chance(cfg.idleGlow.chance)) return;
+
+    lastIdleGlowAt = now;
+    Ratrak.pulse("blink", cfg.idleGlow.pulseMs);
+  }, cfg.idleGlow.checkEveryMs);
 
   const onLoad = () => {
     if (chance(cfg.bubble.greetChance)) showBubble(cfg.bubble.greetText, cfg.bubble.greetDurationMs);
@@ -273,6 +307,7 @@ export function initRatrak(userConfig = {}) {
       window.removeEventListener("load", onLoad);
 
       window.clearInterval(talkTimer);
+      window.clearInterval(idleGlowTimer);
       Ratrak.stopIdleBlinkLoop();
     },
   };
