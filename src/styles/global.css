@@ -11,17 +11,34 @@
   --radius: 16px;
 }
 
-* { box-sizing: border-box; }
-html, body { height: 100%; }
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  font:
+    16px/1.5 ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Helvetica,
+    Arial;
 }
 
-a { color: inherit; text-decoration: none; }
-a:hover { text-decoration: underline; }
+a {
+  color: inherit;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
 
 .container {
   max-width: var(--maxw);
@@ -44,7 +61,7 @@ p {
 
 .card {
   background: color-mix(in srgb, var(--panel) 85%, transparent);
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius);
   padding: 16px;
 }
@@ -68,8 +85,8 @@ p {
   width: 48px;
   height: 48px;
   border-radius: 10px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: grid;
   place-items: center;
   user-select: none;
@@ -90,7 +107,7 @@ p {
   width: min(360px, calc(100vw - 72px));
   height: 100vh;
   background: color-mix(in srgb, var(--panel) 92%, transparent);
-  border-left: 1px solid rgba(255,255,255,0.08);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
   transform: translateX(100%);
   transition: transform 220ms ease;
   z-index: 60;
@@ -105,7 +122,7 @@ p {
 .ratrak-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.35);
   opacity: 0;
   pointer-events: none;
   transition: opacity 220ms ease;
@@ -146,20 +163,22 @@ p {
   gap: 10px;
   padding: 12px 12px;
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .drawer-link:hover {
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   text-decoration: none;
 }
 
 .kbd-hint {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    monospace;
   font-size: 12px;
   color: var(--muted);
-  border: 1px solid rgba(255,255,255,0.10);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 2px 6px;
   border-radius: 8px;
 }
@@ -172,13 +191,15 @@ p {
   max-width: min(280px, calc(100vw - 96px));
   padding: 10px 12px;
   border-radius: 12px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: var(--text);
   z-index: 65;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 180ms ease, transform 180ms ease;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
 }
 
 .ratrak-bubble[data-show="true"] {
@@ -194,13 +215,15 @@ p {
   width: 14px;
   height: 14px;
   transform: translateY(-50%) rotate(45deg);
-  background: rgba(255,255,255,0.06);
-  border-right: 1px solid rgba(255,255,255,0.12);
-  border-top: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .ratrak-bubble code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    monospace;
   font-size: 13px;
   color: var(--text);
   background: transparent;
@@ -219,14 +242,22 @@ p {
 
 .ratrak-btn[data-active="true"] .ratrak-sprite {
   transform: scale(1.08);
-  filter:
-    drop-shadow(0 0 6px rgba(76, 255, 122, 0.45))
+  filter: drop-shadow(0 0 6px rgba(76, 255, 122, 0.45))
     drop-shadow(0 0 14px rgba(76, 255, 122, 0.25));
 }
 
-.ratrak-btn[data-state="move"] .ratrak-sprite { transform: translateX(-1px) scale(1.03); }
-.ratrak-btn[data-state="blink"] .ratrak-sprite { filter: drop-shadow(0 0 6px rgba(76,255,122,0.35)) drop-shadow(0 0 12px rgba(76,255,122,0.18)); }
-.ratrak-btn[data-state="work"] .ratrak-sprite { transform: scale(1.08); filter: drop-shadow(0 0 6px rgba(76,255,122,0.45)) drop-shadow(0 0 14px rgba(76,255,122,0.25)); }
+.ratrak-btn[data-state="move"] .ratrak-sprite {
+  transform: translateX(-1px) scale(1.03);
+}
+.ratrak-btn[data-state="blink"] .ratrak-sprite {
+  filter: drop-shadow(0 0 6px rgba(76, 255, 122, 0.35))
+    drop-shadow(0 0 12px rgba(76, 255, 122, 0.18));
+}
+.ratrak-btn[data-state="work"] .ratrak-sprite {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 6px rgba(76, 255, 122, 0.45))
+    drop-shadow(0 0 14px rgba(76, 255, 122, 0.25));
+}
 
 /* Mobile polish */
 @media (max-width: 640px) {
@@ -302,4 +333,70 @@ p {
 
 .muted {
   color: var(--muted);
+}
+
+/* Cards / lists */
+.grid {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 720px) {
+  .grid.cols-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 14px;
+}
+
+.item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.item-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.item-title strong {
+  color: var(--text);
+}
+
+.pill {
+  font-size: 12px;
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.item p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.item .meta {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.meta a {
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.18);
+}
+
+.meta a:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.35);
 }

@@ -11,37 +11,111 @@ import "../styles/global.css";
 
   <body>
     <main class="container">
-      <h1>
-        I build software.<br />
-        I teach kids to build things too.
-      </h1>
+      <header class="hero">
+		<h1>
+			I build software.<br />
+			I teach kids to build things too.
+		</h1>
 
-      <p>Backend-first brain. Minimal UI. Pixel ratrak companion.</p>
+		<p class="lead">Backend-first brain. Minimal UI. Pixel ratrak companion.</p>
 
-      <div class="card" style="margin-top: 24px;">
-        <strong style="color: var(--text);">Next:</strong>
-        <span style="color: var(--muted);"> Ratrak sprite states + drawer + bubbles</span>
-      </div>
+		<div class="card">
+			<strong>Next:</strong>
+			<span class="muted"> Ratrak sprite states + drawer + bubbles</span>
+		</div>
+	</header>
 
-      <section id="about" style="margin-top: 56px;">
-        <h2 style="margin: 0 0 10px 0;">About</h2>
-        <p>Backend developer. Minimal UI enjoyer. Ratrak is my pixel companion.</p>
-      </section>
 
-      <section id="projects" style="margin-top: 40px;">
-        <h2 style="margin: 0 0 10px 0;">Projects</h2>
-        <p>Coming soon: a few things I built and what I learned.</p>
-      </section>
+    <div class="stack">
+		<section id="about" class="section">
+			<h2>About </h2>
+			<p>Backend developer. Minimal UI enjoyer. Ratrak is my pixel companion.</p>
+			</section>
 
-      <section id="teaching" style="margin-top: 40px;">
-        <h2 style="margin: 0 0 10px 0;">Teaching</h2>
-        <p>I run programming courses for kids — curious minds, playful learning.</p>
-      </section>
+			<section id="projects" class="section">
+			<h2>Projects</h2>
+			<div class="grid cols-2">
+			<article class="item">
+				<div class="item-title">
+				<strong>ratrak.sk</strong>
+				<span class="pill">astro</span>
+				</div>
+				<p>Personal site playground: pixel companion + clean content.</p>
+				<div class="meta">
+				<a href="#projects">case study</a>
+				<a href="#projects">github</a>
+				</div>
+			</article>
 
-      <section id="logbook" style="margin-top: 40px;">
-        <h2 style="margin: 0 0 10px 0;">Logbook</h2>
-        <p>Short notes instead of a blog. No pressure.</p>
-      </section>
+			<article class="item">
+				<div class="item-title">
+				<strong>Backend thing</strong>
+				<span class="pill">api</span>
+				</div>
+				<p>A small backend project you’re proud of (add later).</p>
+				<div class="meta">
+				<a href="#projects">notes</a>
+				<a href="#projects">repo</a>
+				</div>
+			</article>
+			</div>
+
+			</section>
+
+			<section id="teaching" class="section">
+			<h2>Teaching</h2>
+			<div class="grid">
+			<article class="item">
+				<div class="item-title">
+				<strong>Programming for kids</strong>
+				<span class="pill">workshops</span>
+				</div>
+				<p>Hands-on sessions: micro:bit, basics, and lots of “why?” questions.</p>
+				<div class="meta">
+				<span>Age: 10–14</span>
+				<span>Format: small groups</span>
+				</div>
+			</article>
+
+			<article class="item">
+				<div class="item-title">
+				<strong>micro:bit course</strong>
+				<span class="pill">micro:bit</span>
+				</div>
+				<p>Playful intro to programming + electronics. Projects kids can show off.</p>
+				<div class="meta">
+				<span>Beginner-friendly</span>
+				<span>Fun-first</span>
+				</div>
+			</article>
+			</div>
+
+			</section>
+
+			<section id="logbook" class="section">
+			<h2>Logbook</h2>
+			<div class="grid">
+			<article class="item">
+				<div class="item-title">
+				<strong>v0.1: ratrak lives</strong>
+				<span class="pill">now</span>
+				</div>
+				<p>Sprite states, bubbles, and a drawer menu. Next: content + polish.</p>
+			</article>
+
+			<article class="item">
+				<div class="item-title">
+				<strong>notes</strong>
+				<span class="pill">soon</span>
+				</div>
+				<p>Short technical notes instead of blog posts. Zero pressure.</p>
+			</article>
+			</div>
+
+			</section>
+
+	</div>
+
 
 	  <div style="height: 120vh;"></div>
     </main>

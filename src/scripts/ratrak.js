@@ -30,7 +30,7 @@ const defaultConfig = {
 
   talk: {
     idleEveryMs: 12_000,
-    prob: { idle: 0.22, scroll: 0.10, click: 0.70, open: 0.75 },
+    prob: { idle: 0.22, scroll: 0.1, click: 0.7, open: 0.75 },
   },
 
   spritePulse: {
@@ -98,7 +98,10 @@ export function initRatrak(userConfig = {}) {
     backdrop.dataset.open = String(open);
     drawer.setAttribute("aria-hidden", String(!open));
     backdrop.setAttribute("aria-hidden", String(!open));
-    btn.setAttribute("aria-label", open ? "Close Ratrak menu" : "Open Ratrak menu");
+    btn.setAttribute(
+      "aria-label",
+      open ? "Close Ratrak menu" : "Open Ratrak menu",
+    );
 
     // Shift ratrak left on desktop so it stays visible next to drawer
     const shift = open && !isMobile();
@@ -168,7 +171,13 @@ export function initRatrak(userConfig = {}) {
       idleBlinkTimer = null;
     }
 
-    return { setState, pulse, startIdleBlinkLoop, stopIdleBlinkLoop, getState: () => state };
+    return {
+      setState,
+      pulse,
+      startIdleBlinkLoop,
+      stopIdleBlinkLoop,
+      getState: () => state,
+    };
   })();
 
   // --- Bubble ---
@@ -187,7 +196,10 @@ export function initRatrak(userConfig = {}) {
     bubbleText.textContent = text;
 
     const [bMin, bMax] = cfg.spritePulse.blinkMs;
-    Ratrak.pulse("blink", drawer.dataset.open === "true" ? 300 : randInt(bMin, bMax));
+    Ratrak.pulse(
+      "blink",
+      drawer.dataset.open === "true" ? 300 : randInt(bMin, bMax),
+    );
 
     bubble.dataset.show = "true";
     bubble.setAttribute("aria-hidden", "false");
@@ -217,7 +229,9 @@ export function initRatrak(userConfig = {}) {
     const open = drawer.dataset.open === "true";
     setDrawerOpen(!open);
 
-    Ratrak.setState(!open ? "work" : "idle", { holdMs: cfg.spritePulse.afterToggleHoldMs });
+    Ratrak.setState(!open ? "work" : "idle", {
+      holdMs: cfg.spritePulse.afterToggleHoldMs,
+    });
 
     if (!open) maybeSay("open");
   }
@@ -267,7 +281,10 @@ export function initRatrak(userConfig = {}) {
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("scroll", onScroll);
 
-  const talkTimer = window.setInterval(() => maybeSay("idle"), cfg.talk.idleEveryMs);
+  const talkTimer = window.setInterval(
+    () => maybeSay("idle"),
+    cfg.talk.idleEveryMs,
+  );
 
   // --- Init state ---
   setDrawerOpen(false);
@@ -294,7 +311,8 @@ export function initRatrak(userConfig = {}) {
   }, cfg.idleGlow.checkEveryMs);
 
   const onLoad = () => {
-    if (chance(cfg.bubble.greetChance)) showBubble(cfg.bubble.greetText, cfg.bubble.greetDurationMs);
+    if (chance(cfg.bubble.greetChance))
+      showBubble(cfg.bubble.greetText, cfg.bubble.greetDurationMs);
   };
   window.addEventListener("load", onLoad, { once: true });
 
