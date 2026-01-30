@@ -186,7 +186,7 @@ p {
 .ratrak-bubble {
   position: fixed;
   right: 72px;
-  top: 50%;
+  top: 32%;
   transform: translateY(-50%);
   max-width: min(280px, calc(100vw - 96px));
   padding: 10px 12px;
