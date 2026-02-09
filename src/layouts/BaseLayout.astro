@@ -86,17 +86,52 @@ const {
       <p style="margin: 0 0 10px 0;">Quick shortcuts. Click outside to close.</p>
 
       <nav class="drawer-nav">
-        <a class="drawer-link" href="/#about"
-          ><span>about</span><span class="kbd-hint">A</span></a
+        {lang === "en" ? (
+          <>
+            <a class="drawer-link" href="/"
+              ><span>home</span><span class="kbd-hint">H</span></a
+            >
+            <a class="drawer-link" href="/#about"
+              ><span>about</span><span class="kbd-hint">A</span></a
+            >
+            <a class="drawer-link" href="/#projects"
+              ><span>projects</span><span class="kbd-hint">P</span></a
+            >
+            <a class="drawer-link" href="/teaching"
+              ><span>teaching</span><span class="kbd-hint">T</span></a
+            >
+            <a class="drawer-link" href="/logbook"
+              ><span>logbook</span><span class="kbd-hint">L</span></a
+            >
+          </>
+        ) : (
+          <>
+            <a class="drawer-link" href="/sk"
+              ><span>domov</span><span class="kbd-hint">H</span></a
+            >
+            <a class="drawer-link" href="/sk/#about"
+              ><span>o mne</span><span class="kbd-hint">A</span></a
+            >
+            <a class="drawer-link" href="/sk/#projects"
+              ><span>projekty</span><span class="kbd-hint">P</span></a
+            >
+            <a class="drawer-link" href="/sk/teaching"
+              ><span>výuka</span><span class="kbd-hint">T</span></a
+            >
+            <a class="drawer-link" href="/sk/logbook"
+              ><span>logbook</span><span class="kbd-hint">L</span></a
+            >
+          </>
+        )}
+
+        <hr style="margin: 16px 0; border: none; border-top: 1px solid rgba(255, 255, 255, 0.1);" />
+        
+        <div style="font-size: 12px; padding: 0 4px;">Language:</div>
+        <a class="drawer-link" href="/"
+          ><span>{lang === "en" ? "✓ English" : "English"}</span></a
         >
-        <a class="drawer-link" href="/#projects"
-          ><span>projects</span><span class="kbd-hint">P</span></a
-        >
-        <a class="drawer-link" href="/teaching"
-          ><span>teaching</span><span class="kbd-hint">T</span></a
-        >
-        <a class="drawer-link" href="/logbook"
-          ><span>logbook</span><span class="kbd-hint">L</span></a
+        <a class="drawer-link" href="/sk"
+          ><span>{lang === "sk" ? "✓ Slovenčina" : "Slovenčina"}</span></a
         >
       </nav>
     </aside>

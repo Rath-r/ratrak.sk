@@ -1,19 +1,19 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { teaching } from "../../content/teaching.js";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { teaching } from "../../../content/teaching.js";
 ---
 
-<BaseLayout title="Teaching — ratrak.sk" lang="en">
+<BaseLayout title="Výuka — ratrak.sk" lang="sk">
   <main class="container">
     <header class="hero">
-      <h1>Teaching</h1>
+      <h1>Výuka</h1>
       <p class="lead">
-        Small courses and workshops: micro:bit, Python, and learning by building.
+        Malé kurzy a workshopy: micro:bit, Python a učenie sa budovaním.
       </p>
 
       <div class="card">
-        <strong>Contact:</strong>
-        <span class="muted">The fastest way is LinkedIn DM.</span>
+        <strong>Kontakt:</strong>
+        <span class="muted">Najrýchlejší spôsob je LinkedIn DM.</span>
       </div>
 
       <div class="meta" style="margin-top: 10px;">
@@ -22,15 +22,15 @@ import { teaching } from "../../content/teaching.js";
           target="_blank"
           rel="noreferrer"
         >
-          open LinkedIn
+          otvoriť LinkedIn
         </a>
-        <a href="/">home</a>
+        <a href="/sk">domov</a>
       </div>
     </header>
 
     <div class="stack">
       <section class="section">
-        <h2>What I teach</h2>
+        <h2>Čo vyučujem</h2>
 
         <div class="grid">
           {teaching.map((t) => (
@@ -55,12 +55,12 @@ import { teaching } from "../../content/teaching.js";
       </section>
 
       <section class="section">
-        <h2>How I teach</h2>
+        <h2>Ako vyučujem</h2>
         <div class="grid">
           <article class="item">
-            <p>I focus on understanding and confidence, not rushing through syntax.</p>
-            <p>We build small projects, debug together, and learn how to ask good questions.</p>
-            <p>I teach kids most often, but I’m happy to teach adults too.</p>
+            <p>Zameriavam sa na pochopenie a sebavedomie, nie na rýchle prejdenie syntaxe.</p>
+            <p>Budujeme malé projekty, spoločne ladíme a učíme sa klásť dobré otázky.</p>
+            <p>Vyučujem väčšinou deti, ale rád by som vyučoval aj dospelých.</p>
           </article>
         </div>
       </section>

@@ -1,0 +1,121 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { projects } from "../../content/projects.js";
+import { teaching } from "../../content/teaching.js";
+import { logbook } from "../../content/logbook.js";
+---
+
+<BaseLayout title="ratrak.sk" lang="sk">
+  <main class="container">
+    <header class="hero">
+      <h1>
+        Vývoj softvéru.<br />
+        Backend-first, pohon zvedavosťou.
+      </h1>
+
+      <p class="lead">
+        Webové aplikácie, automatizácia a systémy, ktoré majú byť dlhodobé.
+      </p>
+
+      <div class="card">
+        <strong>Odkazy:</strong>
+        <span class="muted">GitHub & LinkedIn v menu</span>
+      </div>
+    </header>
+
+    <div class="stack">
+      <section id="about" class="section">
+        <h2>O mne</h2>
+
+        <p>Vytváram webové aplikácie a softvér s dôrazom na backend.</p>
+
+        <p>
+          Pracujem aj naprieč stackom, keď to má zmysel — vrátane frontend
+          a WordPress projektov. Mám rád skúšať nové nástroje, vytvárať
+          automatizáciu a zlepšovať existujúce systémy.
+        </p>
+      </section>
+
+      <section id="projects" class="section" data-ratrak="projects">
+        <h2>Projekty</h2>
+
+        <div class="grid cols-2">
+          {projects.map((p) => (
+            <article class="item">
+              <div class="item-title">
+                <strong>{p.title}</strong>
+                <span class="pill">{p.tag}</span>
+              </div>
+
+              <p>{p.description}</p>
+
+              {p.links && (
+                <div class="meta">
+                  {p.links.map((l) =>
+                    l.external ? (
+                      <a href={l.href} target="_blank" rel="noreferrer">
+                        {l.label}
+                      </a>
+                    ) : (
+                      <a href={l.href}>{l.label}</a>
+                    )
+                  )}
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="teaching" class="section" data-ratrak="teaching">
+        <h2>Výuka</h2>
+
+        <div class="meta" style="margin-bottom: 12px;">
+          <a href="/sk/teaching">otvoriť stránku výuky</a>
+        </div>
+
+        <div class="grid">
+          {teaching.map((t) => (
+            <article class="item">
+              <div class="item-title">
+                <strong>{t.title}</strong>
+                <span class="pill">{t.tag}</span>
+              </div>
+
+              <p>{t.description}</p>
+
+              {t.meta && (
+                <div class="meta">
+                  {t.meta.map((m) => (
+                    <span>{m}</span>
+                  ))}
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="logbook" class="section" data-ratrak="logbook">
+        <h2>Logbook</h2>
+
+        <div class="meta" style="margin-bottom: 12px;">
+          <a href="/sk/logbook">otvoriť logbook</a>
+        </div>
+
+        <div class="grid">
+          {logbook.map((e) => (
+            <article class="item">
+              <div class="item-title">
+                <strong>{e.title}</strong>
+                <span class="pill">{e.tag}</span>
+              </div>
+
+              <p>{e.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
