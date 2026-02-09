@@ -90,6 +90,18 @@ export function initRatrak(userConfig = {}) {
     return { destroy() {} };
   }
 
+  // --- gamemode ---
+  let gameMode = false;
+
+  let savedInlinePos = null;
+  let gamePos = { x: 0, y: 0 };
+  let heldKeys = new Set();
+  let moveRaf = null;
+
+  const SPEED = 3.2; // px per frame-ish (tuned)
+  let lastBumpAt = 0;
+  const BUMP_COOLDOWN_MS = 700;
+
   // --- Attention bob (subtle, rare) ---
   let lastBobAt = 0;
   const bobTimer = window.setInterval(() => {
@@ -97,12 +109,10 @@ export function initRatrak(userConfig = {}) {
     if (drawerOpen) return;
     if (Ratrak.getState() !== "idle") return;
 
-    // very rare
     const now = Date.now();
     const cooldown = randInt(90_000, 180_000); // 1.5–3 min
     if (now - lastBobAt < cooldown) return;
 
-    // probability gate
     if (!chance(0.35)) return;
 
     lastBobAt = now;
@@ -113,7 +123,7 @@ export function initRatrak(userConfig = {}) {
         btn.dataset.bob = "false";
       },
       randInt(2200, 4200),
-    ); // bob for ~2–4s
+    );
   }, 12_000);
 
   const isMobile = () => window.matchMedia("(max-width: 640px)").matches;
@@ -133,9 +143,174 @@ export function initRatrak(userConfig = {}) {
     const shift = open && !isMobile();
     btn.dataset.shift = String(shift);
 
-    // Optional: if you use it in CSS somewhere
-    // btn.dataset.active = String(open);
     btn.dataset.active = String(open && !isMobile());
+  }
+
+  // --- helpers for movement ---
+  function clamp(v, min, max) {
+    return Math.max(min, Math.min(max, v));
+  }
+
+  function getSpriteSize() {
+    const rect = btn.getBoundingClientRect();
+    return { w: rect.width || 48, h: rect.height || 48 };
+  }
+
+  function applyGamePosition() {
+    const { w, h } = getSpriteSize();
+    const minX = 8;
+    const minY = 8;
+    const maxX = window.innerWidth - w - 8;
+    const maxY = window.innerHeight - h - 8;
+
+    const beforeX = gamePos.x;
+    const beforeY = gamePos.y;
+
+    gamePos.x = clamp(gamePos.x, minX, maxX);
+    gamePos.y = clamp(gamePos.y, minY, maxY);
+
+    btn.style.left = `${gamePos.x}px`;
+    btn.style.top = `${gamePos.y}px`;
+
+    // bump detection only in game mode (avoid surprises)
+    if (!gameMode) return;
+
+    // Ak sme sa pokúsili ísť mimo a clamp to zastavil → bump
+    if (beforeX < minX) bump("left");
+    else if (beforeX > maxX) bump("right");
+
+    if (beforeY < minY) bump("top");
+    else if (beforeY > maxY) bump("bottom");
+  }
+
+  function bump(dir) {
+    const now = Date.now();
+    if (now - lastBumpAt < BUMP_COOLDOWN_MS) return;
+    lastBumpAt = now;
+
+    // vizuálny feedback
+    Ratrak.pulse("blink", 220);
+
+    // mikro “odraz” (posun o pár px)
+    const nudge = 10;
+    if (dir === "left") gamePos.x += nudge;
+    if (dir === "right") gamePos.x -= nudge;
+    if (dir === "top") gamePos.y += nudge;
+    if (dir === "bottom") gamePos.y -= nudge;
+
+    applyGamePosition();
+
+    // občasná hláška (nie vždy)
+    if (chance(0.28)) {
+      const lines = [
+        "> bonk",
+        "> edge detected",
+        "> no exit this way",
+        "> terrain boundary",
+      ];
+      showBubble(pick(lines), 1100);
+    }
+  }
+
+  function enableGameMovement() {
+    savedInlinePos = {
+      left: btn.style.left,
+      top: btn.style.top,
+      right: btn.style.right,
+      bottom: btn.style.bottom,
+      transform: btn.style.transform,
+    };
+
+    const rect = btn.getBoundingClientRect();
+    gamePos = { x: rect.left, y: rect.top };
+
+    btn.style.right = "auto";
+    btn.style.bottom = "auto";
+    btn.style.transform = "none";
+    btn.style.position = "fixed";
+
+    applyGamePosition();
+  }
+
+  function disableGameMovement() {
+    heldKeys.clear();
+
+    if (moveRaf) {
+      cancelAnimationFrame(moveRaf);
+      moveRaf = null;
+    }
+
+    if (savedInlinePos) {
+      btn.style.left = savedInlinePos.left;
+      btn.style.top = savedInlinePos.top;
+      btn.style.right = savedInlinePos.right;
+      btn.style.bottom = savedInlinePos.bottom;
+      btn.style.transform = savedInlinePos.transform;
+      savedInlinePos = null;
+    } else {
+      btn.style.left = "";
+      btn.style.top = "";
+      btn.style.right = "";
+      btn.style.bottom = "";
+      btn.style.transform = "";
+    }
+
+    btn.dataset.dir = "left";
+  }
+
+  function startMoveLoop() {
+    if (moveRaf) return;
+
+    const step = () => {
+      let dx = 0;
+      let dy = 0;
+
+      if (heldKeys.has("w") || heldKeys.has("arrowup")) dy -= SPEED;
+      if (heldKeys.has("s") || heldKeys.has("arrowdown")) dy += SPEED;
+      if (heldKeys.has("a") || heldKeys.has("arrowleft")) dx -= SPEED;
+      if (heldKeys.has("d") || heldKeys.has("arrowright")) dx += SPEED;
+
+      // update facing direction
+      if (dx > 0) btn.dataset.dir = "right";
+      else if (dx < 0) btn.dataset.dir = "left";
+
+      if (dx !== 0 || dy !== 0) {
+        gamePos.x += dx;
+        gamePos.y += dy;
+        applyGamePosition();
+        Ratrak.pulse("move", 350);
+      }
+
+      moveRaf = requestAnimationFrame(step);
+    };
+
+    moveRaf = requestAnimationFrame(step);
+  }
+
+  // --- gamification ---
+  function toggleGameMode() {
+    gameMode = !gameMode;
+
+    setDrawerOpen(false);
+    Ratrak.pulse("work", 500);
+
+    btn.dataset.mode = gameMode ? "game" : "ambient";
+
+    if (gameMode) {
+      enableGameMovement();
+      showBubble("> GAME MODE enabled\n> use WASD", 2200);
+      startMoveLoop();
+    } else {
+      disableGameMovement();
+      showBubble("> GAME MODE disabled", 1600);
+    }
+  }
+
+  function disableGameMode() {
+    if (!gameMode) return;
+    gameMode = false;
+    btn.dataset.mode = "ambient";
+    disableGameMovement();
   }
 
   // --- Sprite controller ---
@@ -153,7 +328,6 @@ export function initRatrak(userConfig = {}) {
       state = stateName;
       spriteEl.src = src;
 
-      // ✅ expose state to CSS
       btn.dataset.state = stateName;
     }
 
@@ -239,9 +413,7 @@ export function initRatrak(userConfig = {}) {
   }
 
   function maybeSay(reason = "idle") {
-    // On mobile, keep it quiet while drawer is open
     if (isMobile() && drawer.dataset.open === "true") return;
-
     if (!canShowBubble()) return;
 
     const p = cfg.talk.prob[reason] ?? 0;
@@ -264,6 +436,13 @@ export function initRatrak(userConfig = {}) {
 
   // --- Handlers (for cleanup) ---
   const onBtnClick = () => {
+    // If in game mode, clicking can exit game mode (nice UX)
+    if (gameMode) {
+      disableGameMode();
+      showBubble("> GAME MODE disabled", 1400);
+      return;
+    }
+
     Ratrak.pulse("work", cfg.spritePulse.workMs);
     maybeSay("click");
     toggleDrawer();
@@ -280,6 +459,33 @@ export function initRatrak(userConfig = {}) {
     if (e.key === "Escape") {
       setDrawerOpen(false);
       Ratrak.setState("idle");
+      disableGameMode();
+      return;
+    }
+
+    // Toggle game mode with G (works anywhere)
+    if (e.key.toLowerCase() === "g") {
+      toggleGameMode();
+      return;
+    }
+
+    // Game mode: capture movement keys
+    if (gameMode) {
+      const k = e.key.toLowerCase();
+      const allowed = [
+        "w",
+        "a",
+        "s",
+        "d",
+        "arrowup",
+        "arrowdown",
+        "arrowleft",
+        "arrowright",
+      ];
+      if (allowed.includes(k)) {
+        e.preventDefault();
+        heldKeys.add(k);
+      }
       return;
     }
 
@@ -290,8 +496,21 @@ export function initRatrak(userConfig = {}) {
     if (hash) location.hash = hash;
   };
 
+  const onKeyUp = (e) => {
+    if (!gameMode) return;
+    const k = e.key.toLowerCase();
+    heldKeys.delete(k);
+  };
+
+  const onResize = () => {
+    if (!gameMode) return;
+    applyGamePosition();
+  };
+
   let scrollLock = null;
   const onScroll = () => {
+    if (gameMode) return; // game mode = no ambient scroll reactions
+
     if (scrollLock) return;
     scrollLock = window.setTimeout(() => (scrollLock = null), 650);
 
@@ -305,6 +524,8 @@ export function initRatrak(userConfig = {}) {
   btn.addEventListener("click", onBtnClick);
   backdrop.addEventListener("click", onBackdropClick);
   window.addEventListener("keydown", onKeyDown);
+  window.addEventListener("keyup", onKeyUp);
+  window.addEventListener("resize", onResize);
   window.addEventListener("scroll", onScroll);
 
   const talkTimer = window.setInterval(
@@ -314,7 +535,6 @@ export function initRatrak(userConfig = {}) {
 
   // --- Section awareness ---
   let currentSection = null;
-
   const sections = Array.from(document.querySelectorAll("[data-ratrak]"));
 
   function getActiveSection() {
@@ -329,7 +549,9 @@ export function initRatrak(userConfig = {}) {
     return null;
   }
 
-  window.addEventListener("scroll", () => {
+  const onSectionScroll = () => {
+    if (gameMode) return;
+
     const next = getActiveSection();
     if (!next || next === currentSection) return;
 
@@ -341,22 +563,22 @@ export function initRatrak(userConfig = {}) {
       case "projects":
         Ratrak.pulse("move", 500);
         break;
-
       case "teaching":
         Ratrak.pulse("blink", 600);
-        maybeSay("idle"); // jemná šanca na hlášku
+        maybeSay("idle");
         break;
-
       case "logbook":
-        // nič – pokoj
         break;
     }
-  });
+  };
+
+  window.addEventListener("scroll", onSectionScroll);
 
   // --- Init state ---
   setDrawerOpen(false);
   Ratrak.setState("idle");
-  btn.dataset.state = "idle"; // explicit default
+  btn.dataset.mode = "ambient";
+  btn.dataset.state = "idle";
   Ratrak.startIdleBlinkLoop();
 
   // --- NEW: idle micro-glow loop (uses blink state visuals) ---
@@ -388,13 +610,17 @@ export function initRatrak(userConfig = {}) {
       btn.removeEventListener("click", onBtnClick);
       backdrop.removeEventListener("click", onBackdropClick);
       window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", onSectionScroll);
       window.removeEventListener("load", onLoad);
 
       window.clearInterval(bobTimer);
-
       window.clearInterval(talkTimer);
       window.clearInterval(idleGlowTimer);
+
+      disableGameMovement();
       Ratrak.stopIdleBlinkLoop();
     },
   };

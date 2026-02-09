@@ -468,3 +468,19 @@ p {
     animation: none !important;
   }
 }
+/* Game mode cursor hint */
+.ratrak-btn[data-mode="game"] {
+  cursor: grab;
+}
+
+.ratrak-btn[data-mode="game"]:active {
+  cursor: grabbing;
+}
+/* sprite direction */
+.ratrak-btn[data-dir="right"] img {
+  transform: scaleX(-1);
+}
+
+.ratrak-btn[data-dir="left"] img {
+  transform: scaleX(1);
+}
