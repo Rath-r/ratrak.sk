@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { logbook } from "../../content/logbook.js";
+---
+
+<BaseLayout title="Logbook — ratrak.sk" lang="en">
+  <main class="container">
+    <header class="hero">
+      <h1>Logbook</h1>
+      <p class="lead">Short notes. Small progress. No pressure.</p>
+
+      <div class="meta" style="margin-top: 10px;">
+        <a href="/">home</a>
+      </div>
+    </header>
+
+    <div class="stack">
+      <section class="section">
+        <div class="grid">
+          {logbook.map((e) => (
+            <article class="item">
+              <div class="item-title">
+                <strong>{e.title}</strong>
+                <span class="pill">{e.tag}</span>
+              </div>
+              <p>{e.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  </main>
+</BaseLayout>

@@ -1,0 +1,125 @@
+---
+import "../styles/global.css";
+
+const {
+  title = "ratrak.sk",
+  lang = "en",
+} = Astro.props;
+---
+
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <slot />
+
+    <!-- RATRAK BUTTON -->
+    <button
+      id="ratrakBtn"
+      class="ratrak-btn"
+      data-shift="false"
+      aria-label="Open Ratrak menu"
+    >
+      <div class="ratrak-float">
+        <div class="ratrak-sprite">
+          <img
+            id="ratrakSprite"
+            src="/ratrak/idle.png"
+            width="48"
+            height="48"
+            alt=""
+          />
+        </div>
+      </div>
+    </button>
+
+    <!-- BACKDROP -->
+    <div
+      id="ratrakBackdrop"
+      class="ratrak-backdrop"
+      data-open="false"
+      aria-hidden="true"
+    ></div>
+
+    <!-- DRAWER -->
+    <aside
+      id="ratrakDrawer"
+      class="ratrak-drawer"
+      data-open="false"
+      aria-hidden="true"
+      aria-label="Ratrak menu"
+    >
+      <div class="drawer-title">
+        <div>
+          <strong>ratrak</strong> <small>v0.1</small>
+        </div>
+
+        <div class="drawer-actions">
+          <a
+            class="icon-link"
+            href="https://github.com/Rath-r"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="GitHub"
+            title="GitHub"
+          >
+            GH
+          </a>
+          <a
+            class="icon-link"
+            href="https://www.linkedin.com/in/lucia-parcová-šálková-bb935564/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="LinkedIn"
+            title="LinkedIn"
+          >
+            in
+          </a>
+          <span class="kbd-hint">Esc</span>
+        </div>
+      </div>
+
+      <p style="margin: 0 0 10px 0;">Quick shortcuts. Click outside to close.</p>
+
+      <nav class="drawer-nav">
+        <a class="drawer-link" href="/#about"
+          ><span>about</span><span class="kbd-hint">A</span></a
+        >
+        <a class="drawer-link" href="/#projects"
+          ><span>projects</span><span class="kbd-hint">P</span></a
+        >
+        <a class="drawer-link" href="/teaching"
+          ><span>teaching</span><span class="kbd-hint">T</span></a
+        >
+        <a class="drawer-link" href="/logbook"
+          ><span>logbook</span><span class="kbd-hint">L</span></a
+        >
+      </nav>
+    </aside>
+
+    <!-- BUBBLE -->
+    <div
+      id="ratrakBubble"
+      class="ratrak-bubble"
+      data-show="false"
+      aria-hidden="true"
+    >
+      <code id="ratrakBubbleText">&gt; terrain stable</code>
+    </div>
+
+    <script>
+      import { initRatrak } from "../scripts/ratrak.js";
+      import { ratrakQuotes } from "../content/ratrak-quotes.js";
+      import { ratrakSprites } from "../content/ratrak-sprites.js";
+
+      initRatrak({
+        quotes: ratrakQuotes,
+        sprites: ratrakSprites,
+      });
+    </script>
+  </body>
+</html>

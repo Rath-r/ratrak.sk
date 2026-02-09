@@ -1,20 +1,19 @@
+// src/content/projects.js
 export const projects = [
   {
     title: "ratrak.sk",
     tag: "astro",
-    description: "Personal site playground: pixel companion + clean content.",
+    description: "Personal dev space with a pixel ratrak companion.",
     links: [
-      { label: "case study", href: "#projects" },
-      { label: "github", href: "#projects" },
+      { label: "github", href: "https://github.com/Rath-r", external: true },
     ],
   },
   {
-    title: "Backend thing",
-    tag: "api",
-    description: "A small backend project you’re proud of (add later).",
+    title: "More on GitHub",
+    tag: "code",
+    description: "Other experiments and small tools live in my repos.",
     links: [
-      { label: "notes", href: "#projects" },
-      { label: "repo", href: "#projects" },
+      { label: "open", href: "https://github.com/Rath-r", external: true },
     ],
   },
 ];
