@@ -3,9 +3,14 @@ export const projects = [
   {
     title: "ratrak.sk",
     tag: "astro",
-    description: "Personal dev space with a pixel ratrak companion.",
+    description:
+      "Personal dev space with a pixel ratrak companion. Press G for a little gamification. Have fun!",
     links: [
-      { label: "github", href: "https://github.com/Rath-r", external: true },
+      {
+        label: "github",
+        href: "https://github.com/Rath-r/ratrak.sk",
+        external: true,
+      },
     ],
   },
   {

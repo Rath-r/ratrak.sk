@@ -83,7 +83,7 @@ const {
         </div>
       </div>
 
-      <p style="margin: 0 0 10px 0;">Quick shortcuts. Click outside to close.</p>
+      <p style="margin: 0 0 10px 0;">{lang === "sk" ? "Rýchle skratky. Kliknite mimo na zatvorenie." : "Quick shortcuts. Click outside to close."}</p>
 
       <nav class="drawer-nav">
         {lang === "en" ? (
@@ -126,7 +126,7 @@ const {
 
         <hr style="margin: 16px 0; border: none; border-top: 1px solid rgba(255, 255, 255, 0.1);" />
         
-        <div style="font-size: 12px; padding: 0 4px;">Language:</div>
+        <div style="font-size: 12px; padding: 0 4px;">{lang === "sk" ? "Jazyk:" : "Language:"}</div>
         <a class="drawer-link" href="/"
           ><span>{lang === "en" ? "✓ English" : "English"}</span></a
         >
@@ -143,7 +143,7 @@ const {
       data-show="false"
       aria-hidden="true"
     >
-      <code id="ratrakBubbleText">&gt; terrain stable</code>
+      <code id="ratrakBubbleText">{lang === "sk" ? "> terén stabilný" : "> terrain stable"}</code>
     </div>
 
     <script>
