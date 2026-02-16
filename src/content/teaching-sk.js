@@ -9,7 +9,7 @@ export const teaching = [
     title: "Kurz micro:bit",
     tag: "micro:bit",
     description:
-      "Zábavný úvod do programovania + elektroniky. Projekty, ktoré môžu deti predvádzať.",
+      "Zábavný úvod do programovania + elektroniky. Projekty, ktoré tvoria deti samé.",
     meta: ["Vhodné pre začiatočníkov", "Zábava na prvom mieste"],
   },
 ];

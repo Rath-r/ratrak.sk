@@ -8,8 +8,6 @@ export const ratrakQuotes = [
   "> nasadzujem...",
   "> stále beží",
   "> žiadne chyby. Len vlastnosti.",
-  "> zahrieva sa...",
-  "> cache je teplá",
   "> hraničný prípad detegovaný",
   "> refaktorovanie trás",
   "> logujem...",

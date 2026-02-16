@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { projects } from "../content/projects.js";
 import { teaching } from "../content/teaching.js";
 import { logbook } from "../content/logbook.js";
+import { websites } from "../content/websites.js";
 ---
 
 <BaseLayout title="ratrak.sk" lang="en">
@@ -52,6 +53,37 @@ import { logbook } from "../content/logbook.js";
               {p.links && (
                 <div class="meta">
                   {p.links.map((l) =>
+                    l.external ? (
+                      <a href={l.href} target="_blank" rel="noreferrer">
+                        {l.label}
+                      </a>
+                    ) : (
+                      <a href={l.href}>{l.label}</a>
+                    )
+                  )}
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="websites" class="section" data-ratrak="websites">
+        <h2>Websites</h2>
+
+        <div class="grid cols-2">
+          {websites.map((w) => (
+            <article class="item">
+              <div class="item-title">
+                <strong>{w.title}</strong>
+                <span class="pill">{w.tag}</span>
+              </div>
+
+              <p>{w.description}</p>
+
+              {w.links && (
+                <div class="meta">
+                  {w.links.map((l) =>
                     l.external ? (
                       <a href={l.href} target="_blank" rel="noreferrer">
                         {l.label}
